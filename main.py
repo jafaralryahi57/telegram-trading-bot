@@ -1,28 +1,25 @@
+import telebot
 import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # التوكن من Render
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 أهلاً بك!\n\n"
-        "الأوامر:\n"
+bot = telebot.TeleBot(BOT_TOKEN)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(
+        message,
+        "🤖 بوت التداول يعمل بنجاح\n\n"
         "/start - تشغيل البوت\n"
         "/help - المساعدة"
     )
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📌 هذا بوت تجريبي ويعمل بنجاح ✅")
+@bot.message_handler(commands=['help'])
+def help_cmd(message):
+    bot.reply_to(
+        message,
+        "📊 لاحقًا سيتم إضافة تحليل فني وإشارات تداول"
+    )
 
-def main():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-
-    print("Bot is running...")
-    app.run_polling()
-
-if __name__ == "__main__":
-    main()
+print("Bot is running...")
+bot.infinity_polling()
